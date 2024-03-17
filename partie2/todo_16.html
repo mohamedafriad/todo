@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<!-- Création d'une variable de données pour la tâche -->
+	<!-- Titre de la page -->
+  	<title>Todo App V1</title>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<!-- Intégration de Bootstrap 5 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+		integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!-- Script Vue Js 3 -->
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+	<div class="container-fluid" id="app">
+		<!-- Barre de navigation -->
+		<nav class="navbar navbar-expand-sm navbar-light bg-secondary">
+			<div class="container-fluid d-flex">
+				<a class="navbar-brand text-white" href=""><i class="fa-solid fa-list text-white"></i> {{ nom_app }}</a>
+				<div class="justify-content-end">
+					<button class="btn btn-secondary btn-sm text-white"  title="ajouter une nouvelle tâche" data-bs-toggle="modal" data-bs-target="#addModal">
+						<i class="fa-solid fa-plus-square text-white fs-4"></i>
+					</button>
+				</div>
+			</div>
+		</nav>
+		<!-- Entête et version de notre App -->
+		<div>
+			<h1 class="text-center mt-2">Liste Todos <sup><span class="badge bg-danger rounded-pill fs-6">V {{ version }}</span></sup></h1>	
+		</div>
+			<!-- Table/Liste des données -->
+		<table class="table table-hover text-center">
+			<tr class="bg-secondary text-white">
+				<th>Id</th>
+				<th>Description</th>
+				<th>Complète</th>
+				<th>Actions</th>
+			</tr>
+			<!-- utilisation de la directive v-for pour l'affichage des éléments de la liste -->
+			<tr v-for="(todo, index) in todoList" :key="index">
+				<td>{{ todo.id }}</td>
+				<td>{{ todo.description }}</td>
+				<!-- affichage conditionnel avec la directive v-if v-else -->
+				<td v-if="todo.complete"><i class="fa-solid fa-circle-check text-primary fs-2"></i></td>
+				<td v-else="!todo.complete"><i class="fa-solid fa-circle-xmark text-danger fs-2"></i></td>
+				<td>
+					<button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#updateModal"><i class="fa-solid fa-eye text-white"></i></button>
+					<button class="btn btn-info  btn-sm  mx-1" data-bs-toggle="modal" data-bs-target="#updateModal"><i class="fa-solid fa-pen text-white"></i></button>
+					<button class="btn btn-danger  btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fa-solid fa-trash text-white"></i></button>
+				</td>
+			</tr>
+		</table>
+
+		<!-- fenetre modale d'ajout d'une nouvelle tâche -->
+		<div class="modal fade" id="addModal" tabindex="-1"  role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-secondary text-white">
+						<h5 class="modal-title" id="modalTitleId">Ajouter une nouvelle Tâche</h5>
+						<button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" aria-label="Fermer"><i class="fa-solid fa-circle-xmark fs-3"></i></button>
+					</div>
+					<div class="modal-body">
+						<form class="form row d-flex align-items-stretch">
+							<div class="col-12">
+								<label for="id" class="form-label">Id</label>
+								<input type="number" name="id" id="id" class="form-control">
+							</div>
+							<div class="col-12">
+								<label for="description" class="form-label">Description</label>
+								<input type="text" name="description" id="description" class="form-control" required="required" />	
+							</div>
+							<div class="col-12 form-group form-switch d-flex justify-content-around mb-2 mt-2">
+								<label for="complete" class="form-check-label">Complète</label>
+								<input type="checkbox" name="complete" role="switch" id="complete" value="false" class="form-check-input" />
+							</div>
+							<div class="modal-footer d-flex justify-content-center">
+								<button type="submit" class="btn btn-secondary text-white" data-bs-dismiss="modal">Valider</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- fenetre modale de visualisation d'une tâche -->
+		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-secondary text-white">
+						<h5 class="modal-title" id="modalTitleId">Infos Tâche</h5>
+						<button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" aria-label="Fermer"><i class="fa-solid fa-circle-xmark fs-3"></i></button>
+					</div>
+					<div class="modal-body">
+						<form class="form row">
+							<div class="col-12 form-group">
+								<label for="id" class="form-label">Id</label>
+								<input type="number" name="id" id="id" class="form-control">
+							</div>
+							<div class="col-12 form-group">
+								<label for="description" class="form-label">Description</label>
+								<input type="text" name="description" id="description" class="form-control">	
+							</div>
+							<div class="col-12 form-group form-switch d-flex justify-content-around mb-2 mt-2">
+								<label for="complete" class="form-check-label">Complète ? </label>
+								<input type="checkbox" name="complete" id="complete" role="switch" value="false" class="form-check-input">
+							</div>
+							<div class="modal-footer d-flex justify-content-center">
+								<button type="submit" class="btn btn-secondary" data-bs-dismiss="modal" >Valider</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- fenetre de confirmation de suppresion d'une tâche -->
+		<div class="modal fade" tabindex="-1" id="deleteModal" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+				<div class="modal-header bg-secondary text-white">
+					<h5 class="modal-title">Confirmer la suppression</h5>
+					<button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" aria-label="Fermer"><i class="fa-solid fa-circle-xmark fs-3"></i></button>
+				</div>
+				<div class="modal-body">
+				  	<p>Voulez-vous vraiment supprimer cette tâche?</p>
+					<p><span class="text-muted"><i class="fa-solid fa-warning"></i> Cette action est irréversible</span></p>
+				</div>
+				<div class="modal-footer d-flex justify-content-between">
+				  <button type="button" class="btn btn-secondary text-white" data-bs-dismiss="modal">Annuler</button>
+				  <button type="button" class="btn btn-secondary text-white"  data-bs-dismiss="modal">Supprimer</button>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	</div>
+
+
+	<!-- Partie Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous"></script>
+	<!-- Notre App avec Vue Js-->
+	<script>
+		// on importe les fonctions essentielles 
+		const { createApp, ref } = Vue
+	    // on crée notre app
+		createApp({
+			// on initialise notre app
+			setup() {
+				// ici on place nos variables de données
+				const version = "0.16"
+				const nom_app = ref("Todo App")
+				// création d'une liste des tâches prédéfinies
+				const todoList = ref([
+					{
+						'id': 1, 'description': 'Apprendre Html5', 'complete': true
+					},
+					{
+						'id': 2, 'description': 'Apprendre CSS3', 'complete': false
+					},
+					{
+						'id': 3, 'description': 'Apprendre Bootstrap5', 'complete': true
+					},
+					{
+						'id': 4, 'description': 'Apprendre Javascript ES6', 'complete': false
+					},
+				])
+				// création de l'objet todoItem pour stockage temporaire des données de la tâche
+				const todoItem = ref(
+					{
+						'id': 0, 'description': '', 'complete': false
+					}
+				)
+				return {
+				// ici on rend nos variables de données disponibles dans notre template html
+					version, nom_app, todoList, todoItem
+				}
+			}
+		}).mount('#app')  // on monte notre app sur l'élément avec l'id app
+	  </script>
+</body>
+</html>

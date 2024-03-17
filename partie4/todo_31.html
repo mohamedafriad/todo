@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<!-- ajout des statistiques -->
+	<!-- Titre de la page -->
+  	<title>Todo App V1</title>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<!-- Intégration de Bootstrap 5 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+		integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<!-- Script Vue Js 3 local 
+	<script src="../js/vue.global.js"></script> -->
+</head>
+<body>
+	<div class="container-full" id="app">
+		<!-- Barre de navigation -->
+		<nav class="navbar navbar-expand-sm navbar-light bg-secondary">
+			<div class="container-fluid d-flex">
+				<a class="navbar-brand text-white" href=""><i class="fa-solid fa-cubes-stacked text-white"></i> Todo App</a>
+				<div class="justify-content-end">
+					<!-- on fait appel à la fonction addTodoItem pour l'ajout d'une tâche-->
+					<button  @click="emptyTodoItem()" class="btn btn-secondary btn-sm text-white"  title="ajouter une nouvelle tâche" data-bs-toggle="modal" data-bs-target="#addModal">
+						<i class="fa-solid fa-plus-square text-white fs-4"></i>
+					</button>
+					<!-- on ajoute le boutton de chargement qui fait appel à la fonction loadData -->
+					<button  @click="loadData()" class="btn btn-secondary btn-sm text-white"  title="charger la liste des tâches">
+						<i class="fa-solid fa-cloud-arrow-down text-white fs-4"></i>
+					</button>
+					<!-- on ajoute le boutton qui fait appel à la fonction emptyData -->
+					<button  @click="emptyData()" class="btn btn-secondary btn-sm text-white"  title="vider la liste des tâches">
+						<i class="fa-solid fa-trash text-white fs-4"></i>
+					</button>
+				</div>
+			</div>
+		</nav>
+		<div class="container-fluid">
+		<!-- Entête et version de notre App -->
+		<div class="shadow-lg rounded-pill mt-2">
+			<h1 class="text-center p-2">Liste Todos <sup><span class="badge bg-danger rounded-pill fs-6">V {{ version }}</span></sup></h1>	
+		</div>
+		<div v-if="isLoading" class="mt-5 text-center m-auto d-flex justify-content-center align-content-between align-items-center">
+			<div class="spinner-border text-primary" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
+		<!-- Table/Liste des données -->
+		<table class="table table-hover text-center" v-else="!isLoading">
+			<tr class="bg-secondary text-white">
+				<th>Id</th>
+				<th>Description</th>
+				<th>Complète</th>
+				<th>Actions</th>
+			</tr>
+			<!-- utilisation de la directive v-for pour l'affichage des éléments de la liste -->
+			<tr v-for="(todo, index) in todoList" :key="index">
+				<td>{{ todo.id }}</td>
+				<td>{{ todo.description }}</td>
+				<!-- affichage conditionnel avec la directive v-if v-else -->
+				<td v-if="todo.complete"><i class="fa-solid fa-circle-check text-primary fs-4"></i></td>
+				<td v-else="!todo.complete"><i class="fa-solid fa-circle-exclamation text-danger fs-4"></i></td>
+				<td>
+					<button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#infoModal" @click="showTodo(todo)"><i class="fa-solid fa-book-open text-white"></i></button>
+					<!-- on fait appel à la fonction showTodo avec la directive @ et l'événement click -->
+					<button class="btn btn-primary btn-sm mx-1" data-bs-toggle="modal" data-bs-target="#updateModal" @click="showTodo(todo)"><i class="fa-solid fa-pen-to-square text-white"></i></button>
+					<!-- on fait appel à la fonction preDeleteTodo avec la directive @ et l'événement click -->
+					<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" @click="preDeleteTodo(todo)" ><i class="fa-solid fa-trash text-white"></i></button>
+				</td>
+			</tr>
+		</table>
+		</div>
+
+		<!-- fenetre modale d'ajout d'une nouvelle tâche -->
+		<div class="modal fade" id="addModal" tabindex="-1"  role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-secondary text-white">
+						<h5 class="modal-title" id="modalTitleId">Ajouter une nouvelle Tâche</h5>
+						<button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" aria-label="Fermer"><i class="fa-solid fa-circle-xmark fs-3"></i></button>
+					</div>
+					<div class="modal-body">
+						<form  @submit.prevent="addTodoItem()" class="form row d-flex align-items-stretch">
+							<div class="col-12">
+								<label for="id" class="form-label">Id</label>
+								<!-- Liaison du champ id avec la variable id de l'objet todoItem -->
+								<input type="number" name="id" id="id" class="form-control" v-model="todoItem.id" disabled readonly>
+							</div>
+							<div class="col-12">
+								<label for="description" class="form-label">Description</label>
+								<!-- Liaison du champ description avec la variable description de l'objet todoItem -->
+								<input type="text" name="description" id="description" class="form-control" required="required" v-model="todoItem.description"/>	
+							</div>
+							<div class="col-12 form-group form-switch d-flex justify-content-around mb-2 mt-2">
+								<label for="complete" class="form-check-label">Complète</label>
+								<!-- Liaison du champ complete avec la variable complte de l'objet todoItem -->
+								<input type="checkbox" name="complete" role="switch" id="complete" value="false" class="form-check-input" v-model="todoItem.complete"/>
+							</div>
+							<div class="modal-footer d-flex justify-content-center">
+								<button type="submit" class="btn btn-secondary text-white" data-bs-dismiss="modal">Valider</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- fenetre modale de visualisation d'une tâche -->
+		<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-secondary text-white">
+						<h5 class="modal-title" id="modalTitleId">Infos Tâche</h5>
+						<button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" aria-label="Fermer" @click="emptyTodoItem()"><i class="fa-solid fa-circle-xmark fs-3"></i></button>
+					</div>
+					<div class="modal-body">
+						<div class="form row">
+							<div class="col-12 form-group">
+								<label for="id" class="form-label">Id</label>
+								<input type="number" name="id" id="id" class="form-control" v-model="todoItem.id" disabled readonly>
+							</div>
+							<div class="col-12 form-group">
+								<label for="description" class="form-label">Description</label>
+								<input type="text" name="description" id="description" class="form-control" v-model="todoItem.description"  disabled readonly>	
+							</div>
+							<div class="col-12 form-group form-switch d-flex justify-content-around mb-2 mt-2">
+								<label for="complete" class="form-check-label">Complète ? </label>
+								<input type="checkbox" name="complete" id="complete" role="switch" value="false" class="form-check-input" v-model="todoItem.complete"  disabled readonly>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Fenêtre de modification des infos de la tâche -->
+		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-secondary text-white">
+						<h5 class="modal-title" id="modalTitleId">Infos Tâche</h5>
+						<button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" aria-label="Fermer"><i class="fa-solid fa-circle-xmark fs-3"></i></button>
+					</div>
+					<div class="modal-body">
+						<!-- Si on valide notre formulaire on fait appel à la fonction updateTodo en empêchant(prevent) la page de se recharger -->
+						<form class="form row" @submit.prevent="updateTodo()">
+							<div class="col-12 form-group">
+								<label for="id" class="form-label">Id</label>
+								<input type="number" name="id" id="id" class="form-control" v-model="todoItem.id" readonly disabled>
+							</div>
+							<div class="col-12 form-group">
+								<label for="description" class="form-label">Description</label>
+								<input type="text" name="description" id="description" class="form-control" v-model="todoItem.description">	
+							</div>
+							<div class="col-12 form-group form-switch d-flex justify-content-around mb-2 mt-2">
+								<label for="complete" class="form-check-label">Complète ? </label>
+								<input type="checkbox" name="complete" id="complete" role="switch" value="false" class="form-check-input" v-model="todoItem.complete">
+							</div>
+							<div class="modal-footer d-flex justify-content-center">
+								<button type="submit" class="btn btn-secondary" data-bs-dismiss="modal" >Valider</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- fenetre de confirmation de suppresion d'une tâche -->
+		<div class="modal fade" tabindex="-1" id="deleteModal" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+				<div class="modal-header bg-secondary text-white">
+					<h5 class="modal-title">Confirmer la suppression</h5>
+					<button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" aria-label="Fermer"><i class="fa-solid fa-circle-xmark fs-3"></i></button>
+				</div>
+				<div class="modal-body">
+				  	<p>Voulez-vous vraiment supprimer cette tâche?</p>
+					<p><span class="text-muted"><i class="fa-solid fa-warning"></i> Cette action est irréversible</span></p>
+				</div>
+				<div class="modal-footer d-flex justify-content-between">
+					<!-- dans le cas d'annulation on vide notre variable de stockage temporaire -->
+				  	<button type="button" class="btn btn-secondary text-white" data-bs-dismiss="modal" @click="emptyTodoItem()">
+						<i class="fa-solid fa-undo"></i> Annuler
+					</button>
+				  	<!-- on fait appel à la fonction deleteTodo -->
+				  	<button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal" @click="deleteTodo()">
+						<i class="fa-solid fa-trash"></i> Supprimer
+					</button>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	</div>
+
+
+	<!-- Partie Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<!-- Notre App avec Vue Js 3-->
+	<script>
+		// on importe les fonctions essentielles 
+		const { createApp, ref } = Vue
+	    // on crée notre app
+		createApp({
+			// on initialise notre app
+			setup() {
+				// ici on place nos variables qui contiennent données
+				const version = "0.31"
+				// on déclare notre variable id
+				let id = 1
+				// on déclare notre liste de tâches comme tableau/Array vide
+				const todoList = ref([])
+				// création de l'objet todoItem pour stockage temporaire des données de la tâche
+				const todoItem = ref({
+					'id': id, 'description': '', 'complete': false
+				})
+				const message = ref("")
+				// on déclare la fonction emptyTodoItem qui permet la réinitialisation de la variable de stockage temporaire
+				function emptyTodoItem() {
+					todoItem.value = {
+						'id': id, 'description': '', 'complete': false
+					}
+				}
+				// on déclare la fonction addTodoItem qui permet l'ajout d'une nouvelle tâche à la liste des tâches
+				function addTodoItem() {
+					// on ajoute la nouvelle tâche à la liste des tâches
+					todoList.value.push(todoItem.value)
+					// on réinitialise la variable de stockage temporaire todoItem
+					todoItem.value = {
+						'id': ++id, 'description': '', 'complete': false
+					}
+					message.value = "Tâche ajoutée avec succès"
+					swal({'title': '', 'text': message.value, 'icon': "success"})
+				}
+				// on déclare la fonction showTodo qui permet l'affichage des données de la tâche séléctionnée
+				function showTodo(todo) {
+					todoItem.value = todo
+				}
+				// on déclare la fonction preDeleteTodo qui permet de remplir la variable de stockage temporaire avec les données de la tâche séléctionnée
+				// pourquoi ? car la fenêtre modale est hors la boucle v-for donc on a pas accès direct aux éléments de la liste des tâches
+				// on peut bien faire appel à la fonction showTodo car elle fait la même chose
+				function preDeleteTodo(todo) {
+					todoItem.value = todo
+				}
+				// on déclare la fonction deleteTodo qui permet de supprimer définitivement une tâche séléctionnée
+				function deleteTodo() {
+					// on filtre notre liste pour y supprimer la tâche avec l'id correspondant à celui de la tâche séléctionnée
+					todoList.value = todoList.value.filter(todo => todo.id !== todoItem.value.id)
+					// on vide notre variable de stockage temporaire
+					// si on veut permettre d'annuler la suppression on peut récupérer la donnée depuis cette variable donc on la vide pas
+					emptyTodoItem()
+					message.value = "Tâche supprimée avec succès"
+					swal({'title': message.value, 'text': '', 'icon': "success"})
+				}
+				// on déclare la fonction updateTodo qui permet de mettre à jour les données d'une tâche séléctionnée
+				function updateTodo() {
+					// on filtre notre liste pour y supprimer la tâche avec l'id correspondant à celui de la tâche séléctionnée
+					todoList.value = todoList.value.filter(todo => todo.id !== todoItem.value.id)
+					// on ajoute à nouveau la tâche mise à jour à la liste des tâches
+					todoList.value.push(todoItem.value)
+					// on vide notre variable de stockage temporaire
+					emptyTodoItem()
+					// on fait le tri de notre liste par id
+					todoList.value = todoList.value.sort((a,b) => a.id - b.id )
+					message.value = "Tâche mise à jour avec succès"
+					swal({'title': message.value, 'text': '', 'icon': "success"})
+				}
+				// on déclare la fonction loadData qui permet de charger une liste des tâches prédéfinies
+				// on déclare la variable isLoading pour détecter le chargement de la liste
+				const isLoading = ref(false)
+				function loadData() {
+					isLoading.value = true
+					setTimeout(()=>{
+						todoList.value = [
+							{
+								'id': 1, 'description': 'Apprendre Html5', 'complete': true
+							},
+							{
+								'id': 2, 'description': 'Apprendre CSS3', 'complete': false
+							},
+							{
+								'id': 3, 'description': 'Apprendre Bootstrap5', 'complete': true
+							},
+							{
+								'id': 4, 'description': 'Apprendre Javascript ES6', 'complete': false
+							},
+						]
+						id = 5
+						message.value = "Liste des tâches chargée avec succès"
+						isLoading.value = false
+					}, 2000)
+				}
+				// on déclare la fonction emptyData qui permet de vider la liste des tâches
+				function emptyData() {
+					todoList.value = []
+					id = 1
+				}
+
+				return {
+					// ici on rend nos variables de données disponibles dans notre template html
+					version, todoList, todoItem, message, isLoading,
+					addTodoItem, showTodo, emptyTodoItem, preDeleteTodo, deleteTodo, updateTodo, loadData, emptyData
+				}
+			}
+		}).mount('#app')  // on monte notre app sur l'élément avec l'id app
+	  </script>
+</body>
+</html>

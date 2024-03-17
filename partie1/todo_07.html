@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<!-- Fenetre modale d'ajout d'une tâche - Partie 1 -->
+	<!-- Titre de la page -->
+  	<title>Todo App V1</title>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<!-- Intégration de Bootstrap 5 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+		integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+	<div class="container-fluid">
+		<nav class="navbar navbar-expand-sm navbar-light bg-secondary">
+			<div class="container-fluid d-flex">
+				<a class="navbar-brand text-white" href=""><i class="fa-solid fa-list text-white"></i> Todo App</a>
+				<div class="justify-content-end">
+					<button class="btn btn-secondary btn-sm text-white"  title="ajouter une nouvelle tâche" data-bs-toggle="modal" data-bs-target="#addModal">
+						<i class="fa-solid fa-plus-square text-white fs-4"></i>
+					</button>
+				</div>
+			</div>
+		</nav>
+		<div>
+			<h1 class="text-center mt-2">Liste Todos <sup><span class="badge bg-danger rounded-pill fs-6">V 0.7</span></sup></h1>	
+		</div>
+			<!-- LIste des données -->
+		<table class="table table-hover text-center">
+			<tr class="bg-secondary text-white">
+				<th>Id</th>
+				<th>Description</th>
+				<th>Complète</th>
+				<th>Actions</th>
+			</tr>
+			<tr >
+				<td >1</td>
+				<td>Apprendre Html5</td>
+				<td><i class="fa-solid fa-circle-check text-primary fs-2"></i></td>
+				<td>
+					<button class="btn btn-success btn-sm"><i class="fa-solid fa-eye text-white"></i></button>
+					<button class="btn btn-info  btn-sm"><i class="fa-solid fa-pen text-white"></i></button>
+					<button class="btn btn-danger  btn-sm"><i class="fa-solid fa-trash text-white"></i></button>
+				</td>
+			</tr>
+			<tr>
+				<td >2</td>
+				<td>Apprendre CSS3</td>
+				<td><i class="fa-solid fa-circle-xmark text-danger fs-2"></i></td>
+				<td>
+					<button class="btn btn-success  btn-sm"><i class="fa-solid fa-eye text-white"></i></button>
+					<button class="btn btn-info  btn-sm"><i class="fa-solid fa-pen text-white"></i></button>
+					<button class="btn btn-danger  btn-sm"><i class="fa-solid fa-trash text-white"></i></button>
+				</td>
+			</tr>
+			<tr>
+				<td >3</td>
+				<td>Apprendre Bootstrap5</td>
+				<td><i class="fa-solid fa-circle-xmark text-danger fs-2"></i></td>
+				<td>
+					<button class="btn btn-success  btn-sm"><i class="fa-solid fa-eye text-white"></i></button>
+					<button class="btn btn-info  btn-sm"><i class="fa-solid fa-pen text-white"></i></button>
+					<button class="btn btn-danger  btn-sm"><i class="fa-solid fa-trash text-white"></i></button>
+				</td>
+			</tr>
+			<tr>
+				<td >4</td>
+				<td>Apprendre JavaScript</td>
+				<td><i class="fa-solid fa-circle-check text-primary fs-2"></i></td>
+				<td>
+					<button class="btn btn-success  btn-sm"><i class="fa-solid fa-eye text-white"></i></button>
+					<button class="btn btn-info  btn-sm"><i class="fa-solid fa-pen text-white"></i></button>
+					<button class="btn btn-danger  btn-sm"><i class="fa-solid fa-trash text-white"></i></button>
+				</td>
+			</tr>
+		</table>
+
+		<!-- fenetre modale d'ajout d'une nouvelle tâche -->
+		<div class="modal fade" id="addModal" tabindex="-1"  role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-secondary text-white">
+						<h5 class="modal-title" id="modalTitleId">Ajouter une nouvelle Tâche</h5>
+							<button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+					</div>
+					<div class="modal-body">
+						<form class="form row d-flex align-items-stretch">
+							<p>Ici on place le formulaire d'ajout d'une nouvelle tâche</p>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+	<!-- Partie Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous"></script>
+</body>
+</html>
